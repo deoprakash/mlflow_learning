@@ -1,7 +1,5 @@
 from fastapi.testclient import TestClient
-
-from app.main import app
-from app.main import predictor
+from unittest.mock import patch
 
 
 class FakeModel:
@@ -10,7 +8,8 @@ class FakeModel:
         return [0]
 
 
-predictor.model = FakeModel()
+with patch("mlflow.sklearn.load_model", return_value=FakeModel()):
+    from app.main import app
 
 client = TestClient(app)
 
