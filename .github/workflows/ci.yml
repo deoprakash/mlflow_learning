@@ -1,27 +1,41 @@
 name: CI
 
 on:
-    push:
-    pull_request:
+  push:
+  pull_request:
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-        steps:
-          - name: Checkout repository
-            uses: actions/checkout@v4
-        
-          - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-                python-version: "3.12"
-            
-          - name: Install dependencies
-            run: |
-                python -m pip install --upgrade pip
-                pip install -r requirements.txt
-        
-          - name: Run tests
-            run: |
-                python -m pytest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          python -m pytest
+
+      - name: Start MLflow server
+        run: |
+          mlflow server \
+            --host 127.0.0.1 \
+            --port 5000 \
+            --backend-store-uri sqlite:///mlflow.db \
+            --default-artifact-root ./mlartifacts > mlflow.log 2>&1 &
+
+          sleep 10
+
+      - name: Run training pipeline
+        run: |
+          python training/pipeline.py
