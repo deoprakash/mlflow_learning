@@ -9,3 +9,5 @@ mlruns/
 .DS_Store
 
 data/versions/
+
+app/mlartifacts/
