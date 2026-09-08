@@ -1,7 +1,16 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.main import predictor
 
+
+class FakeModel:
+
+    def predict(self, features):
+        return [0]
+
+
+predictor.model = FakeModel()
 
 client = TestClient(app)
 
